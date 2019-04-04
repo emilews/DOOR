@@ -25,7 +25,7 @@ SECRET_KEY = 'niqix085t9q#u36rb%9jl2f$!9se&k@al6tqiy*8a@2v%05=q@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.68']
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'server.wsgi.application'
 DATABASES = {
     'default': {
     'ENGINE': 'django.db.backends.mysql',
-    'NAME': 'door',
+    'NAME': 'csi',
     'USER':'root',
     'PASSWORD':'Cebiche123',
     'HOST':'localhost',
