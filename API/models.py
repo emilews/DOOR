@@ -1,6 +1,16 @@
 from django.db import models
 
 # Create your models here.
+class ApiRegistro(models.Model):
+    nombre = models.CharField(max_length=25)
+    password = models.CharField(max_length=8)
+    email = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'api_registro'
+
+
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=80)
 
@@ -145,6 +155,7 @@ class Registro(models.Model):
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=8)
     pswd = models.CharField(max_length=100)
+    device = models.CharField(max_length=15, blank=True, null=True)
 
     class Meta:
         managed = False

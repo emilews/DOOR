@@ -18,26 +18,29 @@ from django.db import transaction
 @csrf_exempt 
 def GetCode(request):
     if request.method == 'GET':
-        return HttpResponseNotFound("Don't use GET in here.")
+        return HttpResponseNotFound("Don't use GET to get codes.")
     if request.method == 'POST':
         data = request.POST
         users = Registro.objects.filter(email=data['email'])
-        if users:
+        device = data['device']
+        if len(users) == 1 and users[0].device == device:
             return JsonResponse({'code':users[0].password})
         else:
             return HttpResponseNotFound("User not found.")
     return
 
 @csrf_exempt 
+@transaction.atomic
 def LogIn(request):
+    if request.method == 'GET':
+        return HttpResponseNotFound("Don't use GET to log in.")
     if request.method == 'POST':
-        data_unicode = request.body.decode('utf-8')
-        body = json.loads(data_unicode)
-        email = body['email']
-        users = Registro.objects.filter(email=body['email'])
-        if users:
-            if  sha256_crypt.verify(body['password'], users[0].pswd):
-                return JsonResponse({'code':users[0].password})
+        data = request.POST
+        users = Registro.objects.filter(email=data['email'])
+        if len(users) == 1:
+            if  sha256_crypt.verify(data['password'], users[0].pswd):
+                Registro.objects.select_for_update().filter(email=data['email']).update(device=data['device'])
+                return JsonResponse({'Status': 'Succesfully logged in!'})
             else:
                 return HttpResponseNotFound("Wrong password.")
         else:
