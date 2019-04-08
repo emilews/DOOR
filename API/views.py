@@ -21,9 +21,8 @@ def GetCode(request):
         return HttpResponseNotFound("Don't use GET to get codes.")
     if request.method == 'POST':
         data = request.POST
-        users = Registro.objects.filter(email=data['email'])
-        device = data['device']
-        if len(users) == 1 and users[0].device == device:
+        users = Registro.objects.filter(device=data['device'])
+        if len(users) == 1:
             return JsonResponse({'code':users[0].password})
         else:
             return HttpResponseNotFound("User not found.")
@@ -40,11 +39,11 @@ def LogIn(request):
         if len(users) == 1:
             if  sha256_crypt.verify(data['password'], users[0].pswd):
                 Registro.objects.select_for_update().filter(email=data['email']).update(device=data['device'])
-                return JsonResponse({'Status': 'Succesfully logged in!'})
+                return JsonResponse({'Status': 'Success.'})
             else:
-                return HttpResponseNotFound("Wrong password.")
+                return JsonResponse({'Status': 'Wrong password.'})
         else:
-            return HttpResponseNotFound("User not found.")           
+            return JsonResponse({'Status':"User not found."})           
 
 
 @csrf_exempt 
