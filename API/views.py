@@ -30,11 +30,12 @@ def GetCode(request):
 
 @csrf_exempt 
 @transaction.atomic
-def LogIn(request):
+def Second(request):
     if request.method == 'GET':
         return HttpResponseNotFound("Don't use GET to log in.")
     if request.method == 'POST':
         data = request.POST
+        print(data)
         users = Registro.objects.filter(email=data['email'])
         if len(users) == 1:
             if  sha256_crypt.verify(data['password'], users[0].pswd):
@@ -68,3 +69,16 @@ def SetPassword(request):
         if Registro.objects.filter(email=data['email']):
             Registro.objects.select_for_update().filter(email=data['email']).update(pswd = hash)
     return JsonResponse({'Success':'200'})
+
+
+@csrf_exempt
+@transaction.atomic
+def First(request):
+    if request.method == 'POST':
+        data = request.POST
+        user = Registro.objects.filter(email=data['email'])
+        if user:
+            return JsonResponse({'Name': user[0].nombre})
+    return HttpResponseNotFound("Don't use GET to log in.")
+
+
